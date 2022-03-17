@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkLocalStorage = exports.fetchData = exports.populationsHaveChanged = exports.getAndCheckDateWithExpiry = exports.checkIfDataExpired = void 0;
+exports.getCountriesEU = exports.checkLocalStorage = exports.fetchData = exports.populationsHaveChanged = exports.getAndCheckDateWithExpiry = exports.checkIfDataExpired = void 0;
 const config_1 = require("../config");
 const now = new Date();
 // Adding an date expiry object to localSorage under "fetchData"
@@ -55,12 +55,14 @@ const populationsHaveChanged = function (oldData, newData) {
     oldData.forEach((country) => {
         oldPopulationsData.push({
             name: country.name,
+            regionalBlocs: country.regionalBlocs,
             population: country.population,
         });
     });
     newData.forEach((country) => {
         newPopulationsData.push({
             name: country.name,
+            regionalBlocs: country.regionalBlocs,
             population: country.population,
         });
     });
@@ -146,32 +148,37 @@ exports.checkLocalStorage = checkLocalStorage;
 const countries = JSON.parse(localStorage.getItem("TP"));
 const getCountriesEU = function (countries) {
     const countriesEU = [];
-    countries.forEach((country) => {
-        const countriesInUnions = [];
-        if (country.regionalBlocs)
-            countriesInUnions.push(country.regionalBlocs);
-        countriesInUnions.forEach((unions) => {
-            unions.filter((union) => {
-                if (union.acronym === "EU")
-                    countriesEU.push(country);
+    if (countries !== null) {
+        countries.forEach((country) => {
+            const countriesInUnions = [];
+            if (country.regionalBlocs)
+                countriesInUnions.push(country.regionalBlocs);
+            countriesInUnions.forEach((unions) => {
+                unions.filter((union) => {
+                    if (union.acronym === "EU")
+                        countriesEU.push(country);
+                });
             });
         });
-    });
+    }
     return countriesEU;
 };
-const countriesEU = getCountriesEU(countries);
+exports.getCountriesEU = getCountriesEU;
+const countriesEU = (0, exports.getCountriesEU)(countries);
 // console.log(countriesEU);
 // Z uzyskanej w ten sposób tablicy usuń wszystkie państwa posiadające w swojej nazwie literę a.
 const getCountriesWithoutA = function (countries) {
     const countriesWitroutA = [];
-    countriesEU.forEach((country) => {
-        const [...names] = country.name;
-        if (!names.includes("a"))
-            countriesWitroutA.push(country);
-    });
+    if (countries !== null) {
+        countries.forEach((country) => {
+            const [...names] = country.name;
+            if (!names.includes("a"))
+                countriesWitroutA.push(country);
+        });
+    }
     return countriesWitroutA;
 };
-const countriesWitroutA = getCountriesWithoutA(countries);
+const countriesWitroutA = getCountriesWithoutA(countriesEU);
 // console.log(countriesWitroutA);
 // Z uzyskanej w ten sposób tablicy posortuj państwa według populacji, tak by najgęściej zaludnione znajdowały się na górze listy.
 const sortCountriesByPopulation = function (countries) {
@@ -179,10 +186,11 @@ const sortCountriesByPopulation = function (countries) {
     return sortedCountries;
 };
 const sortedCountries = sortCountriesByPopulation(countriesWitroutA);
-// console.log(sortedCountries);
+console.log(sortedCountries);
 // Zsumuj populację pięciu najgęściej zaludnionych państw i oblicz, czy jest większa od 500 milionów
 const sumTheBiggestCountries = function (countries) {
     const fiveBiggestCountries = countries.splice(0, 5);
+    console.log(fiveBiggestCountries);
     const populations = [];
     fiveBiggestCountries.forEach((country) => {
         populations.push(country.population);

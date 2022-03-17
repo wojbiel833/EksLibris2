@@ -3,6 +3,12 @@ import { WEEK_TIMESTAMP, API_URL, LOCAL_STORAGE_KEY } from "../config";
 
 const now = new Date();
 
+interface Country {
+  name: string;
+  regionalBlocs: [{ acronym: string }];
+  population: number;
+}
+
 // Adding an date expiry object to localSorage under "fetchData"
 const setDateWithExpiry = function (key: string, value: Date, ttl: number) {
   const dateExpiry = {
@@ -41,11 +47,6 @@ export const getAndCheckDateWithExpiry = function (key: string) {
   return checkedData;
 };
 
-interface Country {
-  name: string;
-  population: number;
-}
-
 // 5) Stwórz metodę, która przy ponownym ściąganiu danych państw porówna populację między starym i nowym zestawem danych oraz wyświetli wszystkie nazwy państw, których populacja uległa zmianie.
 export const populationsHaveChanged = function (
   oldData: Country[],
@@ -60,6 +61,7 @@ export const populationsHaveChanged = function (
   oldData.forEach((country: Country) => {
     oldPopulationsData.push({
       name: country.name,
+      regionalBlocs: country.regionalBlocs,
       population: country.population,
     });
   });
@@ -67,6 +69,7 @@ export const populationsHaveChanged = function (
   newData.forEach((country: Country) => {
     newPopulationsData.push({
       name: country.name,
+      regionalBlocs: country.regionalBlocs,
       population: country.population,
     });
   });
@@ -155,26 +158,22 @@ checkLocalStorage();
 // Z Tablicy Państw z zadania 1 przefiltruj wszystkie należące do Unii Europejskiej.
 const countries = JSON.parse(localStorage.getItem("TP")!);
 
-interface CountryEU {
-  name: String;
-  regionalBlocs: [];
-  countriesInUnions: [];
-}
-
-const getCountriesEU = function (countries: []) {
+export const getCountriesEU = function (countries: []) {
   const countriesEU: [] = [];
 
-  countries.forEach((country: CountryEU) => {
-    const countriesInUnions = [];
+  if (countries !== null) {
+    countries.forEach((country: Country) => {
+      const countriesInUnions: [] = [];
 
-    if (country.regionalBlocs) countriesInUnions.push(country.regionalBlocs);
+      if (country.regionalBlocs) countriesInUnions.push(country.regionalBlocs);
 
-    countriesInUnions.forEach((unions: []) => {
-      unions.filter((union: { acronym: string }) => {
-        if (union.acronym === "EU") countriesEU.push(country);
+      countriesInUnions.forEach((unions: Country[]) => {
+        unions.filter((union: { acronym: string }) => {
+          if (union.acronym === "EU") countriesEU.push(country);
+        });
       });
     });
-  });
+  }
 
   return countriesEU;
 };
@@ -184,15 +183,18 @@ const countriesEU: [] = getCountriesEU(countries);
 // Z uzyskanej w ten sposób tablicy usuń wszystkie państwa posiadające w swojej nazwie literę a.
 const getCountriesWithoutA = function (countries: []) {
   const countriesWitroutA: [] = [];
-  countriesEU.forEach((country: Country) => {
-    const [...names] = country.name;
 
-    if (!names.includes("a")) countriesWitroutA.push(country);
-  });
+  if (countries !== null) {
+    countries.forEach((country: Country) => {
+      const [...names] = country.name;
+
+      if (!names.includes("a")) countriesWitroutA.push(country);
+    });
+  }
 
   return countriesWitroutA;
 };
-const countriesWitroutA: [] = getCountriesWithoutA(countries);
+const countriesWitroutA: [] = getCountriesWithoutA(countriesEU);
 // console.log(countriesWitroutA);
 
 // Z uzyskanej w ten sposób tablicy posortuj państwa według populacji, tak by najgęściej zaludnione znajdowały się na górze listy.
@@ -206,12 +208,12 @@ const sortCountriesByPopulation = function (countries: []) {
 };
 
 const sortedCountries = sortCountriesByPopulation(countriesWitroutA);
-// console.log(sortedCountries);
+console.log(sortedCountries);
 
 // Zsumuj populację pięciu najgęściej zaludnionych państw i oblicz, czy jest większa od 500 milionów
 const sumTheBiggestCountries = function (countries: []) {
   const fiveBiggestCountries = countries.splice(0, 5);
-
+  console.log(fiveBiggestCountries);
   const populations: [] = [];
   fiveBiggestCountries.forEach((country: { population: number }) => {
     populations.push(country.population);
@@ -227,4 +229,5 @@ const sumTheBiggestCountries = function (countries: []) {
     return false;
   }
 };
+
 sumTheBiggestCountries(sortedCountries);
