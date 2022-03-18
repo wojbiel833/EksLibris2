@@ -155,6 +155,7 @@ const getCountriesEU = function (countries) {
                 countriesInUnions.push(country.regionalBlocs);
             countriesInUnions.forEach((unions) => {
                 unions.filter((union) => {
+                    console.log(union);
                     if (union.acronym === "EU")
                         countriesEU.push(country);
                 });

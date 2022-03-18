@@ -3,9 +3,11 @@ import { WEEK_TIMESTAMP, API_URL, LOCAL_STORAGE_KEY } from "../config";
 
 const now = new Date();
 
+type regonalBlocks = { acronym: string };
+
 interface Country {
   name: string;
-  regionalBlocs: [{ acronym: string }];
+  regionalBlocs: regonalBlocks;
   population: number;
 }
 
@@ -156,19 +158,20 @@ checkLocalStorage();
 ////////////////////////////////////////////////////////////////////////////////////////
 
 // Z Tablicy Państw z zadania 1 przefiltruj wszystkie należące do Unii Europejskiej.
-const countries = JSON.parse(localStorage.getItem("TP")!);
+const countries = JSON.parse(localStorage.getItem("TP")!) as Country;
 
 export const getCountriesEU = function (countries: []) {
-  const countriesEU: [] = [];
+  const countriesEU = [] as Country[];
 
   if (countries !== null) {
     countries.forEach((country: Country) => {
-      const countriesInUnions: [] = [];
+      const countriesInUnions = [] as Country[];
 
       if (country.regionalBlocs) countriesInUnions.push(country.regionalBlocs);
 
-      countriesInUnions.forEach((unions: Country[]) => {
+      countriesInUnions.forEach((unions: RegonalBlocks[]) => {
         unions.filter((union: { acronym: string }) => {
+          console.log(union);
           if (union.acronym === "EU") countriesEU.push(country);
         });
       });
