@@ -164,12 +164,12 @@ export const getCountriesEU = function (countries: []) {
   const countriesEU = [] as Country[];
 
   if (countries !== null) {
-    countries.forEach((country: Country) => {
+    countries.forEach((country: regonalBlocks): void => {
       const countriesInUnions = [] as Country[];
 
       if (country.regionalBlocs) countriesInUnions.push(country.regionalBlocs);
 
-      countriesInUnions.forEach((unions: RegonalBlocks[]) => {
+      countriesInUnions.forEach((unions: Country[]): void => {
         unions.filter((union: { acronym: string }) => {
           console.log(union);
           if (union.acronym === "EU") countriesEU.push(country);
