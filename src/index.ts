@@ -3,11 +3,11 @@ import { WEEK_TIMESTAMP, API_URL, LOCAL_STORAGE_KEY } from "../config";
 
 const now = new Date();
 
-type regonalBlocks = { acronym: string };
+type regonalBlocs = { regionalBlocs: [{ acronym: string }] };
 
 interface Country {
   name: string;
-  regionalBlocs: regonalBlocks;
+  regionalBlocs: regonalBlocs;
   population: number;
 }
 
@@ -158,34 +158,39 @@ checkLocalStorage();
 ////////////////////////////////////////////////////////////////////////////////////////
 
 // Z Tablicy Państw z zadania 1 przefiltruj wszystkie należące do Unii Europejskiej.
-const countries = JSON.parse(localStorage.getItem("TP")!) as Country;
+const countries = JSON.parse(localStorage.getItem("TP")!) as [];
 
 export const getCountriesEU = function (countries: []) {
   const countriesEU = [] as Country[];
 
   if (countries !== null) {
-    countries.forEach((country: regonalBlocks): void => {
-      const countriesInUnions = [] as Country[];
+    countries.forEach((country: Country): void => {
+      // console.log(country);
+      const countriesInUnions = [] as regonalBlocs[];
 
-      if (country.regionalBlocs) countriesInUnions.push(country.regionalBlocs);
+      if (country.regionalBlocs as regonalBlocs)
+        countriesInUnions.push(country.regionalBlocs);
 
-      countriesInUnions.forEach((unions: Country[]): void => {
-        unions.filter((union: { acronym: string }) => {
-          console.log(union);
-          if (union.acronym === "EU") countriesEU.push(country);
-        });
+      countriesInUnions.forEach((unions: regonalBlocs): void => {
+        const filteredUnions: [] = unions.filter(
+          (union: { acronym: string }) => {
+            // console.log(union);
+            if (union.acronym === "EU") countriesEU.push(country);
+          }
+        );
+        console.log(filteredUnions);
       });
     });
   }
 
   return countriesEU;
 };
-const countriesEU: [] = getCountriesEU(countries);
+const countriesEU = getCountriesEU(countries) as [];
 // console.log(countriesEU);
 
 // Z uzyskanej w ten sposób tablicy usuń wszystkie państwa posiadające w swojej nazwie literę a.
 const getCountriesWithoutA = function (countries: []) {
-  const countriesWitroutA: [] = [];
+  const countriesWitroutA = [] as Country[];
 
   if (countries !== null) {
     countries.forEach((country: Country) => {
@@ -197,12 +202,12 @@ const getCountriesWithoutA = function (countries: []) {
 
   return countriesWitroutA;
 };
-const countriesWitroutA: [] = getCountriesWithoutA(countriesEU);
+const countriesWitroutA = getCountriesWithoutA(countriesEU) as [];
 // console.log(countriesWitroutA);
 
 // Z uzyskanej w ten sposób tablicy posortuj państwa według populacji, tak by najgęściej zaludnione znajdowały się na górze listy.
 const sortCountriesByPopulation = function (countries: []) {
-  const sortedCountries = countries.sort(
+  const sortedCountries: [] = countries.sort(
     (a: { population: number }, b: { population: number }) =>
       b.population - a.population
   );
@@ -210,17 +215,18 @@ const sortCountriesByPopulation = function (countries: []) {
   return sortedCountries;
 };
 
-const sortedCountries = sortCountriesByPopulation(countriesWitroutA);
-console.log(sortedCountries);
+const sortedCountries = sortCountriesByPopulation(countriesWitroutA) as [];
+// console.log(sortedCountries);
 
 // Zsumuj populację pięciu najgęściej zaludnionych państw i oblicz, czy jest większa od 500 milionów
 const sumTheBiggestCountries = function (countries: []) {
-  const fiveBiggestCountries = countries.splice(0, 5);
+  const fiveBiggestCountries = countries.splice(0, 5) as [];
   console.log(fiveBiggestCountries);
   const populations: [] = [];
-  fiveBiggestCountries.forEach((country: { population: number }) => {
-    populations.push(country.population);
-  });
+
+  fiveBiggestCountries.forEach((country: Country) =>
+    populations.push(country.population)
+  );
 
   const populationInSum = populations.reduce((pop, el) => (pop += el), 0);
 
