@@ -140,7 +140,7 @@ init();
 
 // Z Tablicy Państw z zadania 1 przefiltruj wszystkie należące do Unii Europejskiej.
 const countries = JSON.parse(localStorage.getItem("TP")!) as Country[];
-console.log(countries);
+// console.log(countries);
 
 export const getCountriesEU = function (countries: Country[]) {
   const countriesEU = [] as Country[];
@@ -155,15 +155,15 @@ export const getCountriesEU = function (countries: Country[]) {
       const filteredUnions = flatCountriesInUnions.filter(
         (union: RegionalBlocs) => union.acronym === "EU"
       );
-
-      if (filteredUnions) countriesEU.push(country);
+      console.log(filteredUnions);
+      // if (filteredUnions) countriesEU.push(country);
     });
   }
 
   return countriesEU;
 };
 const countriesEU = getCountriesEU(countries) as Country[];
-console.log(countriesEU);
+// console.log(countriesEU);
 // Z uzyskanej w ten sposób tablicy usuń wszystkie państwa posiadające w swojej nazwie literę a.
 export const getCountriesWithoutA = function (countries: Country[]) {
   const countriesWitroutA = [] as Country[];
