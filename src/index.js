@@ -24,7 +24,8 @@ const setDateWithExpiry = function (key, value, ttl) {
         localStorage.setItem(key, JSON.stringify(dateExpiry));
     }
     else
-        console.log(`The local storage already has key "${key}" in use.`);
+        "";
+    // console.log(`The local storage already has key "${key}" in use.`);
 };
 // 4) Przy starcie aplikacji sprawdź ile czasu minęło od poprzedniego ściągnięcia danych państw. Jeśli od ostatniego razu minęło co najmniej 7 dni, ściągnij i zapisz je ponownie.
 const getAndCheckDateWithExpiry = function (key) {
@@ -35,11 +36,11 @@ const getAndCheckDateWithExpiry = function (key) {
 const checkIfDataExpired = function (storageDateExpiryTimestamp, newDate) {
     const todaysTimestamp = newDate.getTime();
     if (storageDateExpiryTimestamp >= todaysTimestamp) {
-        console.log("Data is expired!");
+        // console.log("Data is expired!");
         return true;
     }
     else {
-        console.log("Data doesn't exist or hasn't expired.");
+        // console.log("Data doesn't exist or hasn't expired.");
         return false;
     }
 };
@@ -100,7 +101,7 @@ const checkLocalStorage = function () {
                     JSON.parse(localStorage.getItem("TP"));
                 }
                 else {
-                    console.log("Fetch unsuccesful!");
+                    // console.log("Fetch unsuccesful!");
                 }
             }
         }
@@ -137,32 +138,19 @@ init();
 ////////////////////////////////////////////////////////////////////////////////////////
 // Z Tablicy Państw z zadania 1 przefiltruj wszystkie należące do Unii Europejskiej.
 const countries = JSON.parse(localStorage.getItem("TP"));
-console.log(countries);
+// console.log(countries);
 const getCountriesEU = function (countries) {
     const countriesEU = [];
     const countriesInUnions = [];
     if (countries !== null) {
         countries.forEach((country) => {
-            // console.log(country);
             if (country.regionalBlocs)
                 countriesInUnions.push(country.regionalBlocs);
-            const filteredUnions = countriesInUnions.filter((union) => {
-                if (union.acronym === "EU")
-                    countriesEU.push(country);
-            });
-            console.log("filteredUnions", filteredUnions);
-            // countriesInUnions.forEach((unions: regonalBlocs): void => {
-            //   console.log("unions", unions);
-            //   const filteredUnions: [] = unions.filter(
-            //     (union: { acronym: string }) => {
-            //       console.log("union", union);
-            //       if (union.acronym === "EU") countriesEU.push(country);
-            //     }
-            //   );
-            //   console.log(filteredUnions);
-            // });
+            const flatCountriesInUnions = countriesInUnions.flat(2);
+            const filteredUnions = flatCountriesInUnions.filter((union) => union.acronym === "EU");
+            if (filteredUnions)
+                countriesEU.push(country);
         });
-        console.log("countreisInUnions", countriesInUnions);
     }
     return countriesEU;
 };
@@ -194,9 +182,9 @@ const sortedCountries = sortCountriesByPopulation(countriesWitroutA);
 const sumTheBiggestCountries = function (countries) {
     const fiveBiggestCountries = countries.splice(0, 5);
     console.log(fiveBiggestCountries);
-    const populations = [];
-    fiveBiggestCountries.forEach((country) => populations.push(country.population));
+    const populations = fiveBiggestCountries.filter((country) => country.population);
     const populationInSum = populations.reduce((pop, el) => (pop += el), 0);
+    console.log(populationInSum);
     if (populationInSum > 500000000) {
         console.log(`${populationInSum} is greater than 500 mln.`);
         return true;
