@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getCountriesEU = exports.ifPopulationsHaveChanged = exports.checkIfDataExpired = void 0;
+exports.sumTheBiggestCountries = exports.sortCountriesByPopulation = exports.getCountriesWithoutA = exports.getCountriesEU = exports.ifPopulationsHaveChanged = exports.checkIfDataExpired = void 0;
 const config_1 = require("../config");
 const now = new Date();
 let TP = [];
@@ -74,7 +74,7 @@ const saveDataInLocalStorage = function (data) {
 const fetchData = function () {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const res = yield fetch(config_1.API_URL);
+            const res = yield fetch(config_1.CONFIG.API_URL);
             TP = yield res.json();
             return TP;
         }
@@ -87,9 +87,9 @@ const checkLocalStorage = function () {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             // Set new expiry date
-            setDateWithExpiry(config_1.LOCAL_STORAGE_KEY, now, config_1.WEEK_TIMESTAMP);
+            setDateWithExpiry(config_1.CONFIG.LOCAL_STORAGE_KEY, now, config_1.CONFIG.WEEK_TIMESTAMP);
             // Check if data expired
-            const dataExpired = getAndCheckDateWithExpiry(config_1.LOCAL_STORAGE_KEY);
+            const dataExpired = getAndCheckDateWithExpiry(config_1.CONFIG.LOCAL_STORAGE_KEY);
             // If data is expired -> fetchData and overwrite
             if (dataExpired) {
                 const storageData = localStorage.getItem("TP");
@@ -138,7 +138,7 @@ init();
 ////////////////////////////////////////////////////////////////////////////////////////
 // Z Tablicy Państw z zadania 1 przefiltruj wszystkie należące do Unii Europejskiej.
 const countries = JSON.parse(localStorage.getItem("TP"));
-// console.log(countries);
+console.log(countries);
 const getCountriesEU = function (countries) {
     const countriesEU = [];
     const countriesInUnions = [];
@@ -156,7 +156,7 @@ const getCountriesEU = function (countries) {
 };
 exports.getCountriesEU = getCountriesEU;
 const countriesEU = (0, exports.getCountriesEU)(countries);
-// console.log(countriesEU);
+console.log(countriesEU);
 // Z uzyskanej w ten sposób tablicy usuń wszystkie państwa posiadające w swojej nazwie literę a.
 const getCountriesWithoutA = function (countries) {
     const countriesWitroutA = [];
@@ -169,22 +169,23 @@ const getCountriesWithoutA = function (countries) {
     }
     return countriesWitroutA;
 };
-const countriesWitroutA = getCountriesWithoutA(countriesEU);
-// console.log(countriesWitroutA);
+exports.getCountriesWithoutA = getCountriesWithoutA;
+const countriesWitroutA = (0, exports.getCountriesWithoutA)(countriesEU);
 // Z uzyskanej w ten sposób tablicy posortuj państwa według populacji, tak by najgęściej zaludnione znajdowały się na górze listy.
 const sortCountriesByPopulation = function (countries) {
     const sortedCountries = countries.sort((a, b) => b.population - a.population);
     return sortedCountries;
 };
-const sortedCountries = sortCountriesByPopulation(countriesWitroutA);
-// console.log(sortedCountries);
+exports.sortCountriesByPopulation = sortCountriesByPopulation;
+const sortedCountries = (0, exports.sortCountriesByPopulation)(countriesWitroutA);
 // Zsumuj populację pięciu najgęściej zaludnionych państw i oblicz, czy jest większa od 500 milionów
 const sumTheBiggestCountries = function (countries) {
     const fiveBiggestCountries = countries.splice(0, 5);
-    console.log(fiveBiggestCountries);
-    const populations = fiveBiggestCountries.filter((country) => country.population);
+    // console.log(fiveBiggestCountries);
+    const populations = [];
+    fiveBiggestCountries.forEach((country) => populations.push(country.population));
+    // console.log("populations", populations);
     const populationInSum = populations.reduce((pop, el) => (pop += el), 0);
-    console.log(populationInSum);
     if (populationInSum > 500000000) {
         console.log(`${populationInSum} is greater than 500 mln.`);
         return true;
@@ -194,4 +195,5 @@ const sumTheBiggestCountries = function (countries) {
         return false;
     }
 };
-sumTheBiggestCountries(sortedCountries);
+exports.sumTheBiggestCountries = sumTheBiggestCountries;
+(0, exports.sumTheBiggestCountries)(sortedCountries);

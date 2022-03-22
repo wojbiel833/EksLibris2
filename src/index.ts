@@ -1,4 +1,4 @@
-import { WEEK_TIMESTAMP, API_URL, LOCAL_STORAGE_KEY } from "../config";
+import { CONFIG } from "../config";
 import { Country, RegionalBlocs } from "./interfaces";
 
 const now = new Date();
@@ -73,7 +73,7 @@ const saveDataInLocalStorage = function (data: [] | undefined) {
 
 const fetchData = async function () {
   try {
-    const res = await fetch(API_URL);
+    const res = await fetch(CONFIG.API_URL);
     TP = await res.json();
 
     return TP;
@@ -85,10 +85,10 @@ const fetchData = async function () {
 const checkLocalStorage = async function () {
   try {
     // Set new expiry date
-    setDateWithExpiry(LOCAL_STORAGE_KEY, now, WEEK_TIMESTAMP);
+    setDateWithExpiry(CONFIG.LOCAL_STORAGE_KEY, now, CONFIG.WEEK_TIMESTAMP);
 
     // Check if data expired
-    const dataExpired = getAndCheckDateWithExpiry(LOCAL_STORAGE_KEY);
+    const dataExpired = getAndCheckDateWithExpiry(CONFIG.LOCAL_STORAGE_KEY);
 
     // If data is expired -> fetchData and overwrite
     if (dataExpired) {
@@ -139,9 +139,10 @@ init();
 ////////////////////////////////////////////////////////////////////////////////////////
 
 // Z Tablicy Państw z zadania 1 przefiltruj wszystkie należące do Unii Europejskiej.
-const countries = JSON.parse(localStorage.getItem("TP")!) as [];
-// console.log(countries);
-export const getCountriesEU = function (countries: []) {
+const countries = JSON.parse(localStorage.getItem("TP")!) as Country[];
+console.log(countries);
+
+export const getCountriesEU = function (countries: Country[]) {
   const countriesEU = [] as Country[];
   const countriesInUnions = [] as RegionalBlocs[];
 
@@ -161,11 +162,10 @@ export const getCountriesEU = function (countries: []) {
 
   return countriesEU;
 };
-const countriesEU = getCountriesEU(countries) as [];
-// console.log(countriesEU);
-
+const countriesEU = getCountriesEU(countries) as Country[];
+console.log(countriesEU);
 // Z uzyskanej w ten sposób tablicy usuń wszystkie państwa posiadające w swojej nazwie literę a.
-const getCountriesWithoutA = function (countries: []) {
+export const getCountriesWithoutA = function (countries: Country[]) {
   const countriesWitroutA = [] as Country[];
 
   if (countries !== null) {
@@ -178,12 +178,12 @@ const getCountriesWithoutA = function (countries: []) {
 
   return countriesWitroutA;
 };
-const countriesWitroutA = getCountriesWithoutA(countriesEU) as [];
-// console.log(countriesWitroutA);
+
+const countriesWitroutA = getCountriesWithoutA(countriesEU) as Country[];
 
 // Z uzyskanej w ten sposób tablicy posortuj państwa według populacji, tak by najgęściej zaludnione znajdowały się na górze listy.
-const sortCountriesByPopulation = function (countries: []) {
-  const sortedCountries: [] = countries.sort(
+export const sortCountriesByPopulation = function (countries: Country[]) {
+  const sortedCountries: Country[] = countries.sort(
     (a: { population: number }, b: { population: number }) =>
       b.population - a.population
   );
@@ -191,19 +191,22 @@ const sortCountriesByPopulation = function (countries: []) {
   return sortedCountries;
 };
 
-const sortedCountries = sortCountriesByPopulation(countriesWitroutA) as [];
-// console.log(sortedCountries);
+const sortedCountries = sortCountriesByPopulation(
+  countriesWitroutA
+) as Country[];
 
 // Zsumuj populację pięciu najgęściej zaludnionych państw i oblicz, czy jest większa od 500 milionów
-const sumTheBiggestCountries = function (countries: []) {
-  const fiveBiggestCountries = countries.splice(0, 5) as [];
-  console.log(fiveBiggestCountries);
-  const populations = fiveBiggestCountries.filter(
-    (country: Country) => country.population
+export const sumTheBiggestCountries = function (countries: Country[]) {
+  const fiveBiggestCountries = countries.splice(0, 5) as Country[];
+  // console.log(fiveBiggestCountries);
+  const populations: number[] = [];
+  fiveBiggestCountries.forEach((country) =>
+    populations.push(country.population)
   );
 
+  // console.log("populations", populations);
   const populationInSum = populations.reduce((pop, el) => (pop += el), 0);
-  console.log(populationInSum);
+
   if (populationInSum > 500000000) {
     console.log(`${populationInSum} is greater than 500 mln.`);
     return true;
