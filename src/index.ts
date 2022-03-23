@@ -156,16 +156,16 @@ export const getCountriesEU = function (countries: Country[]) {
   return countriesEU;
 };
 const countriesEU = getCountriesEU(countries) as Country[];
-console.log(countriesEU);
+// console.log(countriesEU);
 // Z uzyskanej w ten sposób tablicy usuń wszystkie państwa posiadające w swojej nazwie literę a.
 export const getCountriesWithoutA = function (countries: Country[]) {
   const countriesWitroutA = [] as Country[];
 
   if (countries !== null) {
     countries.forEach((country: Country) => {
-      const [...names] = country.name;
+      const [...letters] = country.name;
 
-      if (!names.includes("a")) countriesWitroutA.push(country);
+      if (!letters.includes("a")) countriesWitroutA.push(country);
     });
   }
 
@@ -173,7 +173,7 @@ export const getCountriesWithoutA = function (countries: Country[]) {
 };
 
 const countriesWitroutA = getCountriesWithoutA(countriesEU) as Country[];
-
+// console.log(countriesWitroutA);
 // Z uzyskanej w ten sposób tablicy posortuj państwa według populacji, tak by najgęściej zaludnione znajdowały się na górze listy.
 export const sortCountriesByPopulation = function (countries: Country[]) {
   const sortedCountries: Country[] = countries.sort(
@@ -187,7 +187,7 @@ export const sortCountriesByPopulation = function (countries: Country[]) {
 const sortedCountries = sortCountriesByPopulation(
   countriesWitroutA
 ) as Country[];
-
+console.log(sortedCountries);
 // Zsumuj populację pięciu najgęściej zaludnionych państw i oblicz, czy jest większa od 500 milionów
 export const sumTheBiggestCountries = function (countries: Country[]) {
   const fiveBiggestCountries = countries.splice(0, 5) as Country[];
@@ -197,6 +197,7 @@ export const sumTheBiggestCountries = function (countries: Country[]) {
     populations.push(country.population)
   );
 
+  // populations[1] = 100000000000000;
   // console.log("populations", populations);
   const populationInSum = populations.reduce((pop, el) => (pop += el), 0);
 
@@ -210,3 +211,4 @@ export const sumTheBiggestCountries = function (countries: Country[]) {
 };
 
 sumTheBiggestCountries(sortedCountries);
+console.log(sumTheBiggestCountries(sortedCountries));

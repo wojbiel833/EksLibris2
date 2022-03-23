@@ -152,14 +152,14 @@ const getCountriesEU = function (countries) {
 };
 exports.getCountriesEU = getCountriesEU;
 const countriesEU = (0, exports.getCountriesEU)(countries);
-console.log(countriesEU);
+// console.log(countriesEU);
 // Z uzyskanej w ten sposób tablicy usuń wszystkie państwa posiadające w swojej nazwie literę a.
 const getCountriesWithoutA = function (countries) {
     const countriesWitroutA = [];
     if (countries !== null) {
         countries.forEach((country) => {
-            const [...names] = country.name;
-            if (!names.includes("a"))
+            const [...letters] = country.name;
+            if (!letters.includes("a"))
                 countriesWitroutA.push(country);
         });
     }
@@ -167,6 +167,7 @@ const getCountriesWithoutA = function (countries) {
 };
 exports.getCountriesWithoutA = getCountriesWithoutA;
 const countriesWitroutA = (0, exports.getCountriesWithoutA)(countriesEU);
+// console.log(countriesWitroutA);
 // Z uzyskanej w ten sposób tablicy posortuj państwa według populacji, tak by najgęściej zaludnione znajdowały się na górze listy.
 const sortCountriesByPopulation = function (countries) {
     const sortedCountries = countries.sort((a, b) => b.population - a.population);
@@ -174,12 +175,14 @@ const sortCountriesByPopulation = function (countries) {
 };
 exports.sortCountriesByPopulation = sortCountriesByPopulation;
 const sortedCountries = (0, exports.sortCountriesByPopulation)(countriesWitroutA);
+console.log(sortedCountries);
 // Zsumuj populację pięciu najgęściej zaludnionych państw i oblicz, czy jest większa od 500 milionów
 const sumTheBiggestCountries = function (countries) {
     const fiveBiggestCountries = countries.splice(0, 5);
     // console.log(fiveBiggestCountries);
     const populations = [];
     fiveBiggestCountries.forEach((country) => populations.push(country.population));
+    // populations[1] = 100000000000000;
     // console.log("populations", populations);
     const populationInSum = populations.reduce((pop, el) => (pop += el), 0);
     if (populationInSum > 500000000) {
@@ -193,3 +196,4 @@ const sumTheBiggestCountries = function (countries) {
 };
 exports.sumTheBiggestCountries = sumTheBiggestCountries;
 (0, exports.sumTheBiggestCountries)(sortedCountries);
+console.log((0, exports.sumTheBiggestCountries)(sortedCountries));

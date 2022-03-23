@@ -54,23 +54,33 @@ const poland = {
 };
 const peru = {
     name: "Peru",
-    population: 1000,
+    population: 90000000000000,
     regionalBlocs: [{ acronym: "SAARC" }],
 };
+const countries = [austria, peru, poland];
 describe("getCountriesEU", () => {
     it("returns right output with test data", () => {
-        const countriesEU = [austria, poland, peru];
-        expect((0, index_1.getCountriesEU)(countriesEU)).toEqual([
-            {
-                name: "Austria",
-                population: 1,
-                regionalBlocs: [{ acronym: "EU" }],
-            },
-            {
-                name: "Poland",
-                population: 100,
-                regionalBlocs: [{ acronym: "EU" }],
-            },
+        expect((0, index_1.getCountriesEU)(countries)).toEqual([austria, poland]);
+    });
+});
+describe("getCountriesWithoutA", () => {
+    it("returns right output with test data", () => {
+        expect((0, index_1.getCountriesWithoutA)(countries)).toEqual([peru]);
+    });
+});
+describe("sortCountriesByPopulation", () => {
+    it("returns right output with test data", () => {
+        console.log((0, index_1.sortCountriesByPopulation)(countries));
+        expect((0, index_1.sortCountriesByPopulation)(countries)).toEqual([
+            peru,
+            poland,
+            austria,
         ]);
+    });
+});
+describe("sumTheBiggestCountries", () => {
+    it("returns right output with test data", () => {
+        console.log((0, index_1.sumTheBiggestCountries)(countries));
+        expect((0, index_1.sumTheBiggestCountries)(countries)).toBe(true);
     });
 });
