@@ -58,6 +58,14 @@ const peru = {
     regionalBlocs: [{ acronym: "SAARC" }],
 };
 const countries = [austria, peru, poland];
+const fake5SmallerCountries = [
+    austria,
+    poland,
+    poland,
+    austria,
+    poland,
+];
+const fake5BiggerCountries = [austria, peru, poland, peru, poland];
 describe("getCountriesEU", () => {
     it("returns right output with test data", () => {
         expect((0, index_1.getCountriesEU)(countries)).toEqual([austria, poland]);
@@ -80,7 +88,13 @@ describe("sortCountriesByPopulation", () => {
 });
 describe("sumTheBiggestCountries", () => {
     it("returns right output with test data", () => {
-        console.log((0, index_1.sumTheBiggestCountries)(countries));
-        expect((0, index_1.sumTheBiggestCountries)(countries)).toBe(true);
+        test.each([
+            countries,
+            "You forgot about 2 countries.",
+            [fake5BiggerCountries, true],
+            [fake5SmallerCountries, false],
+        ])(".sumTheBiggestCountries", (countries, result) => {
+            expect((0, index_1.sumTheBiggestCountries)(countries)).toBe(result);
+        });
     });
 });

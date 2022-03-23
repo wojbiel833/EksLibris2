@@ -179,6 +179,16 @@ console.log(sortedCountries);
 // Zsumuj populację pięciu najgęściej zaludnionych państw i oblicz, czy jest większa od 500 milionów
 const sumTheBiggestCountries = function (countries) {
     const fiveBiggestCountries = countries.splice(0, 5);
+    if (fiveBiggestCountries[0] === undefined)
+        return "You forgot about 5 countries.";
+    if (fiveBiggestCountries[1] === undefined)
+        return "You forgot about 4 countries.";
+    if (fiveBiggestCountries[2] === undefined)
+        return "You forgot about 3 countries.";
+    if (fiveBiggestCountries[3] === undefined)
+        return "You forgot about 2 countries.";
+    if (fiveBiggestCountries[4] === undefined)
+        return "You forgot about 1 country.";
     // console.log(fiveBiggestCountries);
     const populations = [];
     fiveBiggestCountries.forEach((country) => populations.push(country.population));

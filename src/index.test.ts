@@ -6,7 +6,7 @@ import {
   sortCountriesByPopulation,
   sumTheBiggestCountries,
 } from "./index";
-import { Country } from "./interfaces";
+import { Country, CountryEU } from "./interfaces";
 
 describe("populationsHaveChanged", () => {
   const unchangedPopulationOld: Country[] = [
@@ -74,6 +74,14 @@ const peru = {
 } as Country;
 
 const countries: Country[] = [austria, peru, poland];
+const fake5SmallerCountries: Country[] = [
+  austria,
+  poland,
+  poland,
+  austria,
+  poland,
+];
+const fake5BiggerCountries: Country[] = [austria, peru, poland, peru, poland];
 
 describe("getCountriesEU", () => {
   it("returns right output with test data", () => {
@@ -100,7 +108,16 @@ describe("sortCountriesByPopulation", () => {
 
 describe("sumTheBiggestCountries", () => {
   it("returns right output with test data", () => {
-    console.log(sumTheBiggestCountries(countries));
-    expect(sumTheBiggestCountries(countries)).toBe(true);
+    test.each([
+      countries,
+      "You forgot about 2 countries.",
+      [fake5BiggerCountries, true],
+      [fake5SmallerCountries, false],
+    ])(
+      ".sumTheBiggestCountries",
+      (countries: Country[], result: string | boolean): string | boolean => {
+        expect(sumTheBiggestCountries(countries)).toBe(result);
+      }
+    );
   });
 });
