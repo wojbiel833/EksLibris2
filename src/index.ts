@@ -1,5 +1,5 @@
 import { CONFIG } from "../config";
-import { Country } from "./interfaces";
+import { Country, CountryEU, RegionalBlocs } from "./interfaces";
 
 const now = new Date();
 let TP: [] | undefined = [];
