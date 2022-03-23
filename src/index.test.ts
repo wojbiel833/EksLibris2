@@ -1,4 +1,11 @@
-import { ifPopulationsHaveChanged, checkIfDataExpired } from "./index";
+import {
+  ifPopulationsHaveChanged,
+  checkIfDataExpired,
+  getCountriesEU,
+  getCountriesWithoutA,
+  sortCountriesByPopulation,
+  sumTheBiggestCountries,
+} from "./index";
 import { Country } from "./interfaces";
 
 describe("populationsHaveChanged", () => {
@@ -41,11 +48,59 @@ describe("populationsHaveChanged", () => {
   );
 });
 
-describe('"checkIfDataExpired', () => {
+describe("checkIfDataExpired", () => {
   test.each([
     [100000000000000, new Date(), true],
     [100, new Date(), false],
   ])(".check checkIfDataExpired results", (timestamp, newDate, result) => {
     expect(checkIfDataExpired(timestamp, newDate)).toBe(result);
+  });
+});
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+const austria = {
+  name: "Austria",
+  population: 1,
+  regionalBlocs: [{ acronym: "EU" }],
+} as Country;
+const poland = {
+  name: "Poland",
+  population: 100,
+  regionalBlocs: [{ acronym: "EU" }],
+} as Country;
+const peru = {
+  name: "Peru",
+  population: 90000000000000,
+  regionalBlocs: [{ acronym: "SAARC" }],
+} as Country;
+
+const countries: Country[] = [austria, peru, poland];
+
+describe("getCountriesEU", () => {
+  it("returns right output with test data", () => {
+    expect(getCountriesEU(countries)).toEqual([austria, poland]);
+  });
+});
+
+describe("getCountriesWithoutA", () => {
+  it("returns right output with test data", () => {
+    expect(getCountriesWithoutA(countries)).toEqual([peru]);
+  });
+});
+
+describe("sortCountriesByPopulation", () => {
+  it("returns right output with test data", () => {
+    console.log(sortCountriesByPopulation(countries));
+    expect(sortCountriesByPopulation(countries)).toEqual([
+      peru,
+      poland,
+      austria,
+    ]);
+  });
+});
+
+describe("sumTheBiggestCountries", () => {
+  it("returns right output with test data", () => {
+    console.log(sumTheBiggestCountries(countries));
+    expect(sumTheBiggestCountries(countries)).toBe(true);
   });
 });

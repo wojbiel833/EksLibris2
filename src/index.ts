@@ -1,4 +1,4 @@
-import { WEEK_TIMESTAMP, API_URL, LOCAL_STORAGE_KEY } from "../config";
+import { CONFIG } from "../config";
 import { Country } from "./interfaces";
 
 const now = new Date();
@@ -14,7 +14,8 @@ const setDateWithExpiry = function (key: string, value: Date, ttl: number) {
   // Check if object is already there, if not add
   if (!localStorage.getItem(key)) {
     localStorage.setItem(key, JSON.stringify(dateExpiry));
-  } else console.log(`The local storage already has key "${key}" in use.`);
+  } else "";
+  // console.log(`The local storage already has key "${key}" in use.`);
 };
 
 // 4) Przy starcie aplikacji sprawdź ile czasu minęło od poprzedniego ściągnięcia danych państw. Jeśli od ostatniego razu minęło co najmniej 7 dni, ściągnij i zapisz je ponownie.
@@ -32,10 +33,10 @@ export const checkIfDataExpired = function (
   const todaysTimestamp = newDate.getTime();
 
   if (storageDateExpiryTimestamp >= todaysTimestamp) {
-    console.log("Data is expired!");
+    // console.log("Data is expired!");
     return true;
   } else {
-    console.log("Data doesn't exist or hasn't expired.");
+    // console.log("Data doesn't exist or hasn't expired.");
     return false;
   }
 };
@@ -72,7 +73,7 @@ const saveDataInLocalStorage = function (data: [] | undefined) {
 
 const fetchData = async function () {
   try {
-    const res = await fetch(API_URL);
+    const res = await fetch(CONFIG.API_URL);
     TP = await res.json();
 
     return TP;
@@ -84,10 +85,10 @@ const fetchData = async function () {
 const checkLocalStorage = async function () {
   try {
     // Set new expiry date
-    setDateWithExpiry(LOCAL_STORAGE_KEY, now, WEEK_TIMESTAMP);
+    setDateWithExpiry(CONFIG.LOCAL_STORAGE_KEY, now, CONFIG.WEEK_TIMESTAMP);
 
     // Check if data expired
-    const dataExpired = getAndCheckDateWithExpiry(LOCAL_STORAGE_KEY);
+    const dataExpired = getAndCheckDateWithExpiry(CONFIG.LOCAL_STORAGE_KEY);
 
     // If data is expired -> fetchData and overwrite
     if (dataExpired) {
@@ -103,7 +104,7 @@ const checkLocalStorage = async function () {
 
         JSON.parse(localStorage.getItem("TP")!);
       } else {
-        console.log("Fetch unsuccesful!");
+        // console.log("Fetch unsuccesful!");
       }
     }
   } catch (err) {
@@ -138,65 +139,44 @@ init();
 ////////////////////////////////////////////////////////////////////////////////////////
 
 // Z Tablicy Państw z zadania 1 przefiltruj wszystkie należące do Unii Europejskiej.
-const countries = JSON.parse(localStorage.getItem("TP")!) as [];
-console.log(countries);
-export const getCountriesEU = function (countries: []) {
+const countries = JSON.parse(localStorage.getItem("TP")!) as Country[];
+// console.log(countries);
+
+export const getCountriesEU = function (countries: Country[]) {
   const countriesEU = [] as Country[];
-  const countriesInUnions = [] as regonalBlocs[];
 
   if (countries !== null) {
-    countries.forEach((country: Country) => {
-      // console.log(country);
-
-      if (country.regionalBlocs as regonalBlocs)
-        countriesInUnions.push(country.regionalBlocs);
-
-      const filteredUnions = countriesInUnions.filter(
-        (union: { acronym: string }) => {
-          if (union.acronym === "EU") countriesEU.push(country);
-        }
-      );
-      console.log("filteredUnions", filteredUnions);
-      // countriesInUnions.forEach((unions: regonalBlocs): void => {
-      //   console.log("unions", unions);
-      //   const filteredUnions: [] = unions.filter(
-      //     (union: { acronym: string }) => {
-      //       console.log("union", union);
-
-      //       if (union.acronym === "EU") countriesEU.push(country);
-      //     }
-      //   );
-      //   console.log(filteredUnions);
-      // });
+    countries.forEach((country: CountryEU) => {
+      const blocs = country.regionalBlocs as unknown as [];
+      if (blocs?.find((union: RegionalBlocs) => union.acronym === "EU"))
+        countriesEU.push(country);
     });
-    console.log("countreisInUnions", countriesInUnions);
   }
 
   return countriesEU;
 };
-const countriesEU = getCountriesEU(countries) as [];
+const countriesEU = getCountriesEU(countries) as Country[];
 // console.log(countriesEU);
-
 // Z uzyskanej w ten sposób tablicy usuń wszystkie państwa posiadające w swojej nazwie literę a.
-const getCountriesWithoutA = function (countries: []) {
+export const getCountriesWithoutA = function (countries: Country[]) {
   const countriesWitroutA = [] as Country[];
 
   if (countries !== null) {
     countries.forEach((country: Country) => {
-      const [...names] = country.name;
+      const [...letters] = country.name;
 
-      if (!names.includes("a")) countriesWitroutA.push(country);
+      if (!letters.includes("a")) countriesWitroutA.push(country);
     });
   }
 
   return countriesWitroutA;
 };
-const countriesWitroutA = getCountriesWithoutA(countriesEU) as [];
-// console.log(countriesWitroutA);
 
+const countriesWitroutA = getCountriesWithoutA(countriesEU) as Country[];
+// console.log(countriesWitroutA);
 // Z uzyskanej w ten sposób tablicy posortuj państwa według populacji, tak by najgęściej zaludnione znajdowały się na górze listy.
-const sortCountriesByPopulation = function (countries: []) {
-  const sortedCountries: [] = countries.sort(
+export const sortCountriesByPopulation = function (countries: Country[]) {
+  const sortedCountries: Country[] = countries.sort(
     (a: { population: number }, b: { population: number }) =>
       b.population - a.population
   );
@@ -204,19 +184,21 @@ const sortCountriesByPopulation = function (countries: []) {
   return sortedCountries;
 };
 
-const sortedCountries = sortCountriesByPopulation(countriesWitroutA) as [];
-// console.log(sortedCountries);
-
+const sortedCountries = sortCountriesByPopulation(
+  countriesWitroutA
+) as Country[];
+console.log(sortedCountries);
 // Zsumuj populację pięciu najgęściej zaludnionych państw i oblicz, czy jest większa od 500 milionów
-const sumTheBiggestCountries = function (countries: []) {
-  const fiveBiggestCountries = countries.splice(0, 5) as [];
-  console.log(fiveBiggestCountries);
-  const populations: [] = [];
-
-  fiveBiggestCountries.forEach((country: Country) =>
+export const sumTheBiggestCountries = function (countries: Country[]) {
+  const fiveBiggestCountries = countries.splice(0, 5) as Country[];
+  // console.log(fiveBiggestCountries);
+  const populations: number[] = [];
+  fiveBiggestCountries.forEach((country) =>
     populations.push(country.population)
   );
 
+  // populations[1] = 100000000000000;
+  // console.log("populations", populations);
   const populationInSum = populations.reduce((pop, el) => (pop += el), 0);
 
   if (populationInSum > 500000000) {
@@ -229,3 +211,4 @@ const sumTheBiggestCountries = function (countries: []) {
 };
 
 sumTheBiggestCountries(sortedCountries);
+console.log(sumTheBiggestCountries(sortedCountries));
