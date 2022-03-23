@@ -6,7 +6,7 @@ import {
   sortCountriesByPopulation,
   sumTheBiggestCountries,
 } from "./index";
-import { Country } from "./interfaces";
+import { Country, RegionalBlocs } from "./interfaces";
 
 describe("populationsHaveChanged", () => {
   const unchangedPopulationOld: Country[] = [
@@ -48,7 +48,7 @@ describe("populationsHaveChanged", () => {
   );
 });
 
-describe('"checkIfDataExpired', () => {
+describe("checkIfDataExpired", () => {
   test.each([
     [100000000000000, new Date(), true],
     [100, new Date(), false],
@@ -56,40 +56,39 @@ describe('"checkIfDataExpired', () => {
     expect(checkIfDataExpired(timestamp, newDate)).toBe(result);
   });
 });
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+const austria = {
+  name: "Austria",
+  population: 1,
+  regionalBlocs: [{ acronym: "EU" }],
+} as Country;
+const poland = {
+  name: "Poland",
+  population: 100,
+  regionalBlocs: [{ acronym: "EU" }],
+} as Country;
+const peru = {
+  name: "Peru",
+  population: 1000,
+  regionalBlocs: [{ acronym: "SAARC" }],
+} as Country;
 
 describe("getCountriesEU", () => {
   it("returns right output with test data", () => {
-    const austria = {
-      name: "Austria",
-      population: 1,
-      regonalBlocs: [{ acronym: "EU" }],
-    };
-    const poland = {
-      name: "Poland",
-      population: 100,
-      regonalBlocs: [{ acronym: "EU" }],
-    };
-    const peru = {
-      name: "Peru",
-      population: 1000,
-      regonalBlocs: [{ acronym: "SAARC" }],
-    };
-
     const countriesEU: Country[] = [austria, poland, peru];
-    const countriesNotEU: Country[] = [austria, poland];
-    console.log(getCountriesEU(countriesEU));
-    // expect(getCountriesEU(countries)).toEqual([
-    //   {
-    //     name: "Afganistan",
-    //     population: 1,
-    //     regonalBlocs: [{ acronym: "EU" }],
-    //   },
 
-    //   {
-    //     name: "Poland",
-    //     population: 100,
-    //     regonalBlocs: [{ acronym: "EU" }],
-    //   },
-    // ]);
+    expect(getCountriesEU(countriesEU)).toEqual([
+      {
+        name: "Austria",
+        population: 1,
+        regionalBlocs: [{ acronym: "EU" }],
+      },
+
+      {
+        name: "Poland",
+        population: 100,
+        regionalBlocs: [{ acronym: "EU" }],
+      },
+    ]);
   });
 });

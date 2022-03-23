@@ -33,7 +33,7 @@ describe("populationsHaveChanged", () => {
         expect((0, index_1.ifPopulationsHaveChanged)(oldPopulation, newPopulation)).toBe(result);
     });
 });
-describe('"checkIfDataExpired', () => {
+describe("checkIfDataExpired", () => {
     test.each([
         [100000000000000, new Date(), true],
         [100, new Date(), false],
@@ -41,37 +41,36 @@ describe('"checkIfDataExpired', () => {
         expect((0, index_1.checkIfDataExpired)(timestamp, newDate)).toBe(result);
     });
 });
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+const austria = {
+    name: "Austria",
+    population: 1,
+    regionalBlocs: [{ acronym: "EU" }],
+};
+const poland = {
+    name: "Poland",
+    population: 100,
+    regionalBlocs: [{ acronym: "EU" }],
+};
+const peru = {
+    name: "Peru",
+    population: 1000,
+    regionalBlocs: [{ acronym: "SAARC" }],
+};
 describe("getCountriesEU", () => {
     it("returns right output with test data", () => {
-        const austria = {
-            name: "Austria",
-            population: 1,
-            regonalBlocs: [{ acronym: "EU" }],
-        };
-        const poland = {
-            name: "Poland",
-            population: 100,
-            regonalBlocs: [{ acronym: "EU" }],
-        };
-        const peru = {
-            name: "Peru",
-            population: 1000,
-            regonalBlocs: [{ acronym: "SAARC" }],
-        };
         const countriesEU = [austria, poland, peru];
-        const countriesNotEU = [austria, poland];
-        console.log((0, index_1.getCountriesEU)(countriesEU));
-        // expect(getCountriesEU(countries)).toEqual([
-        //   {
-        //     name: "Afganistan",
-        //     population: 1,
-        //     regonalBlocs: [{ acronym: "EU" }],
-        //   },
-        //   {
-        //     name: "Poland",
-        //     population: 100,
-        //     regonalBlocs: [{ acronym: "EU" }],
-        //   },
-        // ]);
+        expect((0, index_1.getCountriesEU)(countriesEU)).toEqual([
+            {
+                name: "Austria",
+                population: 1,
+                regionalBlocs: [{ acronym: "EU" }],
+            },
+            {
+                name: "Poland",
+                population: 100,
+                regionalBlocs: [{ acronym: "EU" }],
+            },
+        ]);
     });
 });

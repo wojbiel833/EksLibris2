@@ -1,5 +1,5 @@
 import { CONFIG } from "../config";
-import { Country, RegionalBlocs } from "./interfaces";
+import { Country, CountryEU, RegionalBlocs } from "./interfaces";
 
 const now = new Date();
 let TP: [] | undefined = [];
@@ -144,26 +144,19 @@ const countries = JSON.parse(localStorage.getItem("TP")!) as Country[];
 
 export const getCountriesEU = function (countries: Country[]) {
   const countriesEU = [] as Country[];
-  const countriesInUnions = [] as RegionalBlocs[];
 
   if (countries !== null) {
-    countries.forEach((country: Country) => {
-      if (country.regionalBlocs) countriesInUnions.push(country.regionalBlocs);
-
-      const flatCountriesInUnions = countriesInUnions.flat(2);
-
-      const filteredUnions = flatCountriesInUnions.filter(
-        (union: RegionalBlocs) => union.acronym === "EU"
-      );
-      console.log(filteredUnions);
-      // if (filteredUnions) countriesEU.push(country);
+    countries.forEach((country: CountryEU) => {
+      const blocs = country.regionalBlocs as unknown as [];
+      if (blocs?.find((union: RegionalBlocs) => union.acronym === "EU"))
+        countriesEU.push(country);
     });
   }
 
   return countriesEU;
 };
 const countriesEU = getCountriesEU(countries) as Country[];
-// console.log(countriesEU);
+console.log(countriesEU);
 // Z uzyskanej w ten sposób tablicy usuń wszystkie państwa posiadające w swojej nazwie literę a.
 export const getCountriesWithoutA = function (countries: Country[]) {
   const countriesWitroutA = [] as Country[];

@@ -141,22 +141,18 @@ const countries = JSON.parse(localStorage.getItem("TP"));
 // console.log(countries);
 const getCountriesEU = function (countries) {
     const countriesEU = [];
-    const countriesInUnions = [];
     if (countries !== null) {
         countries.forEach((country) => {
-            if (country.regionalBlocs)
-                countriesInUnions.push(country.regionalBlocs);
-            const flatCountriesInUnions = countriesInUnions.flat(2);
-            const filteredUnions = flatCountriesInUnions.filter((union) => union.acronym === "EU");
-            console.log(filteredUnions);
-            // if (filteredUnions) countriesEU.push(country);
+            const blocs = country.regionalBlocs;
+            if (blocs === null || blocs === void 0 ? void 0 : blocs.find((union) => union.acronym === "EU"))
+                countriesEU.push(country);
         });
     }
     return countriesEU;
 };
 exports.getCountriesEU = getCountriesEU;
 const countriesEU = (0, exports.getCountriesEU)(countries);
-// console.log(countriesEU);
+console.log(countriesEU);
 // Z uzyskanej w ten sposób tablicy usuń wszystkie państwa posiadające w swojej nazwie literę a.
 const getCountriesWithoutA = function (countries) {
     const countriesWitroutA = [];
