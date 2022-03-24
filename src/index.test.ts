@@ -6,7 +6,7 @@ import {
   sortCountriesByPopulation,
   sumTheBiggestCountries,
 } from "./index";
-import { Country, CountryEU } from "./interfaces";
+import { Country } from "./interfaces";
 
 describe("populationsHaveChanged", () => {
   const unchangedPopulationOld: Country[] = [
@@ -84,19 +84,19 @@ const fake5SmallerCountries: Country[] = [
 const fake5BiggerCountries: Country[] = [austria, peru, poland, peru, poland];
 
 describe("getCountriesEU", () => {
-  it("returns right output with test data", () => {
+  it("returns the countries that are in EU", () => {
     expect(getCountriesEU(countries)).toEqual([austria, poland]);
   });
 });
 
 describe("getCountriesWithoutA", () => {
-  it("returns right output with test data", () => {
+  it("returns the countries which don't have 'a' in the name", () => {
     expect(getCountriesWithoutA(countries)).toEqual([peru]);
   });
 });
 
 describe("sortCountriesByPopulation", () => {
-  it("returns right output with test data", () => {
+  it("returns the countries by populations in descending order", () => {
     console.log(sortCountriesByPopulation(countries));
     expect(sortCountriesByPopulation(countries)).toEqual([
       peru,
@@ -107,17 +107,10 @@ describe("sortCountriesByPopulation", () => {
 });
 
 describe("sumTheBiggestCountries", () => {
-  it("returns right output with test data", () => {
-    test.each([
-      countries,
-      "You forgot about 2 countries.",
-      [fake5BiggerCountries, true],
-      [fake5SmallerCountries, false],
-    ])(
-      ".sumTheBiggestCountries",
-      (countries: Country[], result: string | boolean): string | boolean => {
-        expect(sumTheBiggestCountries(countries)).toBe(result);
-      }
-    );
+  test.each([
+    [fake5BiggerCountries, true],
+    [fake5SmallerCountries, false],
+  ])(".sumTheBiggestCountries", (countriesArray, result) => {
+    expect(sumTheBiggestCountries(countriesArray)).toBe(result);
   });
 });

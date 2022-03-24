@@ -67,17 +67,17 @@ const fake5SmallerCountries = [
 ];
 const fake5BiggerCountries = [austria, peru, poland, peru, poland];
 describe("getCountriesEU", () => {
-    it("returns right output with test data", () => {
+    it("returns the countries that are in EU", () => {
         expect((0, index_1.getCountriesEU)(countries)).toEqual([austria, poland]);
     });
 });
 describe("getCountriesWithoutA", () => {
-    it("returns right output with test data", () => {
+    it("returns the countries which don't have 'a' in the name", () => {
         expect((0, index_1.getCountriesWithoutA)(countries)).toEqual([peru]);
     });
 });
 describe("sortCountriesByPopulation", () => {
-    it("returns right output with test data", () => {
+    it("returns the countries by populations in descending order", () => {
         console.log((0, index_1.sortCountriesByPopulation)(countries));
         expect((0, index_1.sortCountriesByPopulation)(countries)).toEqual([
             peru,
@@ -87,14 +87,10 @@ describe("sortCountriesByPopulation", () => {
     });
 });
 describe("sumTheBiggestCountries", () => {
-    it("returns right output with test data", () => {
-        test.each([
-            countries,
-            "You forgot about 2 countries.",
-            [fake5BiggerCountries, true],
-            [fake5SmallerCountries, false],
-        ])(".sumTheBiggestCountries", (countries, result) => {
-            expect((0, index_1.sumTheBiggestCountries)(countries)).toBe(result);
-        });
+    test.each([
+        [fake5BiggerCountries, true],
+        [fake5SmallerCountries, false],
+    ])(".sumTheBiggestCountries", (countriesArray, result) => {
+        expect((0, index_1.sumTheBiggestCountries)(countriesArray)).toBe(result);
     });
 });

@@ -10,5 +10,6 @@ const config = {
     window: {},
   },
   testEnvironment: "jsdom",
+  testMatch: ["**/?(*.)+(spec|test).ts"],
 };
 exports.default = config;
