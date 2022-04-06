@@ -1,5 +1,5 @@
 import { CONFIG } from "../config";
-import { Country, CountryEU, RegionalBlocs } from "./interfaces";
+import { Country, RegionalBlocs } from "./interfaces";
 
 const now = new Date();
 let TP: [] | undefined = [];
@@ -139,76 +139,57 @@ init();
 ////////////////////////////////////////////////////////////////////////////////////////
 
 // Z Tablicy Państw z zadania 1 przefiltruj wszystkie należące do Unii Europejskiej.
-const countries = JSON.parse(localStorage.getItem("TP")!) as Country[];
-// console.log(countries);
+const countriesLS: Country[] = JSON.parse(localStorage.getItem("TP")!);
 
 export const getCountriesEU = function (countries: Country[]) {
   const countriesEU = [] as Country[];
 
-  if (countries !== null) {
-    countries.forEach((country: CountryEU) => {
-      const blocs = country.regionalBlocs as unknown as [];
-      if (blocs?.find((union: RegionalBlocs) => union.acronym === "EU"))
-        countriesEU.push(country);
-    });
-  }
+  countries.forEach((country: Country) => {
+    if (country !== undefined) {
+      const blocs: RegionalBlocs[] | undefined = country.regionalBlocs;
+      if (blocs !== undefined) {
+        if (blocs.find((union: RegionalBlocs) => union.acronym === "EU"))
+          countriesEU.push(country);
+      }
+    }
+  });
 
   return countriesEU;
 };
-const countriesEU = getCountriesEU(countries) as Country[];
-// console.log(countriesEU);
+const countriesEUOutput: Country[] = getCountriesEU(countriesLS);
+console.log(countriesEUOutput);
 // Z uzyskanej w ten sposób tablicy usuń wszystkie państwa posiadające w swojej nazwie literę a.
 export const getCountriesWithoutA = function (countries: Country[]) {
-  const countriesWitroutA = [] as Country[];
-
-  if (countries !== null) {
-    countries.forEach((country: Country) => {
-      const [...letters] = country.name;
-
-      if (!letters.includes("a")) countriesWitroutA.push(country);
-    });
-  }
-
-  return countriesWitroutA;
+  return countries.filter((country: Country) => {
+    if (country) {
+      const name = country.name;
+      return !name.includes("a");
+    }
+  });
 };
 
-const countriesWitroutA = getCountriesWithoutA(countriesEU) as Country[];
-// console.log(countriesWitroutA);
+const countriesWitroutA: Country[] = getCountriesWithoutA(countriesEUOutput);
+
 // Z uzyskanej w ten sposób tablicy posortuj państwa według populacji, tak by najgęściej zaludnione znajdowały się na górze listy.
 export const sortCountriesByPopulation = function (countries: Country[]) {
-  const sortedCountries: Country[] = countries.sort(
+  return countries.sort(
     (a: { population: number }, b: { population: number }) =>
       b.population - a.population
   );
-
-  return sortedCountries;
 };
 
-const sortedCountries = sortCountriesByPopulation(
-  countriesWitroutA
-) as Country[];
-console.log(sortedCountries);
+const sortedCountries = sortCountriesByPopulation(countriesWitroutA);
+
 // Zsumuj populację pięciu najgęściej zaludnionych państw i oblicz, czy jest większa od 500 milionów
 export const sumTheBiggestCountries = function (countries: Country[]) {
-  const fiveBiggestCountries = countries.splice(0, 5) as Country[];
-  // console.log(fiveBiggestCountries);
-  const populations: number[] = [];
-  fiveBiggestCountries.forEach((country) =>
-    populations.push(country.population)
+  const fiveBiggestCountries = countries.slice(0, 5) as Country[];
+  const populations: number[] = fiveBiggestCountries.map(
+    (country) => country.population
   );
-
-  // populations[1] = 100000000000000;
-  // console.log("populations", populations);
   const populationInSum = populations.reduce((pop, el) => (pop += el), 0);
 
-  if (populationInSum > 500000000) {
-    console.log(`${populationInSum} is greater than 500 mln.`);
-    return true;
-  } else {
-    console.log(`${populationInSum} is smaller than 500 mln.`);
-    return false;
-  }
+  console.log(populationInSum > 500000000);
+  return populationInSum > 500000000;
 };
 
 sumTheBiggestCountries(sortedCountries);
-console.log(sumTheBiggestCountries(sortedCountries));
