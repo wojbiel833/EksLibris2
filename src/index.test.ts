@@ -110,7 +110,10 @@ describe("sumTheBiggestCountries", () => {
   test.each([
     [fake5BiggerCountries, true],
     [fake5SmallerCountries, false],
-  ])(".sumTheBiggestCountries", (countriesArray, result) => {
-    expect(sumTheBiggestCountries(countriesArray)).toBe(result);
-  });
+  ])(
+    ".sumTheBiggestCountries returns true/false with different data",
+    (countriesArray, result) => {
+      expect(sumTheBiggestCountries(countriesArray)).toBe(result);
+    }
+  );
 });

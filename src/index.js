@@ -140,35 +140,34 @@ init();
 const countriesLS = JSON.parse(localStorage.getItem("TP"));
 const getCountriesEU = function (countries) {
     const countriesEU = [];
-    if (countries !== null) {
-        countries.forEach((country) => {
+    countries.forEach((country) => {
+        if (country !== undefined) {
             const blocs = country.regionalBlocs;
-            if (blocs === null || blocs === void 0 ? void 0 : blocs.find((union) => union.acronym === "EU"))
-                countriesEU.push(country);
-        });
-    }
+            if (blocs !== undefined) {
+                if (blocs.find((union) => union.acronym === "EU"))
+                    countriesEU.push(country);
+            }
+        }
+    });
     return countriesEU;
 };
 exports.getCountriesEU = getCountriesEU;
-const countriesEU = (0, exports.getCountriesEU)(countriesLS);
+const countriesEUOutput = (0, exports.getCountriesEU)(countriesLS);
+console.log(countriesEUOutput);
 // Z uzyskanej w ten sposób tablicy usuń wszystkie państwa posiadające w swojej nazwie literę a.
 const getCountriesWithoutA = function (countries) {
-    if (countries !== null) {
-        const countriesWitroutA = countries.filter((country) => {
+    return countries.filter((country) => {
+        if (country) {
             const name = country.name;
-            if (!name)
-                return console.log("No country name found.");
             return !name.includes("a");
-        });
-        return countriesWitroutA;
-    }
+        }
+    });
 };
 exports.getCountriesWithoutA = getCountriesWithoutA;
-const countriesWitroutA = (0, exports.getCountriesWithoutA)(countriesEU);
+const countriesWitroutA = (0, exports.getCountriesWithoutA)(countriesEUOutput);
 // Z uzyskanej w ten sposób tablicy posortuj państwa według populacji, tak by najgęściej zaludnione znajdowały się na górze listy.
 const sortCountriesByPopulation = function (countries) {
-    const sortedCountries = countries.sort((a, b) => b.population - a.population);
-    return sortedCountries;
+    return countries.sort((a, b) => b.population - a.population);
 };
 exports.sortCountriesByPopulation = sortCountriesByPopulation;
 const sortedCountries = (0, exports.sortCountriesByPopulation)(countriesWitroutA);
@@ -176,8 +175,6 @@ const sortedCountries = (0, exports.sortCountriesByPopulation)(countriesWitroutA
 const sumTheBiggestCountries = function (countries) {
     const fiveBiggestCountries = countries.slice(0, 5);
     const populations = fiveBiggestCountries.map((country) => country.population);
-    // populations[1] = 100000000000000;
-    // console.log("populations", populations);
     const populationInSum = populations.reduce((pop, el) => (pop += el), 0);
     console.log(populationInSum > 500000000);
     return populationInSum > 500000000;

@@ -1,13 +1,10 @@
 export type RegionalBlocs = {
-  regionalBlocs: [] | { acronym: string };
+  name: string;
   acronym: string;
 };
 
 export interface Country {
   name: string;
   population: number;
-}
-
-export interface CountryEU extends Country {
-  regionalBlocs?: RegionalBlocs;
+  regionalBlocs?: RegionalBlocs[];
 }
