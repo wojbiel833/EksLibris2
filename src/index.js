@@ -140,15 +140,17 @@ init();
 const countriesLS = JSON.parse(localStorage.getItem("TP"));
 const getCountriesEU = function (countries) {
     const countriesEU = [];
-    countries.forEach((country) => {
-        if (country !== undefined) {
-            const blocs = country.regionalBlocs;
-            if (blocs !== undefined) {
-                if (blocs.find((union) => union.acronym === "EU"))
-                    countriesEU.push(country);
+    if (countries) {
+        countries.forEach((country) => {
+            if (country !== undefined) {
+                const blocs = country.regionalBlocs;
+                if (blocs !== undefined) {
+                    if (blocs.find((union) => union.acronym === "EU"))
+                        countriesEU.push(country);
+                }
             }
-        }
-    });
+        });
+    }
     return countriesEU;
 };
 exports.getCountriesEU = getCountriesEU;

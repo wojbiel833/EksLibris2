@@ -9,6 +9,7 @@ const config = {
   globals: {
     window: {},
   },
+  testMatch: ["**/?(*.)+(spec|test).ts"],
   testEnvironment: "jsdom",
 };
 exports.default = config;

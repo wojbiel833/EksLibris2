@@ -144,15 +144,17 @@ const countriesLS: Country[] = JSON.parse(localStorage.getItem("TP")!);
 export const getCountriesEU = function (countries: Country[]) {
   const countriesEU = [] as Country[];
 
-  countries.forEach((country: Country) => {
-    if (country !== undefined) {
-      const blocs: RegionalBlocs[] | undefined = country.regionalBlocs;
-      if (blocs !== undefined) {
-        if (blocs.find((union: RegionalBlocs) => union.acronym === "EU"))
-          countriesEU.push(country);
+  if (countries) {
+    countries.forEach((country: Country) => {
+      if (country !== undefined) {
+        const blocs: RegionalBlocs[] | undefined = country.regionalBlocs;
+        if (blocs !== undefined) {
+          if (blocs.find((union: RegionalBlocs) => union.acronym === "EU"))
+            countriesEU.push(country);
+        }
       }
-    }
-  });
+    });
+  }
 
   return countriesEU;
 };
