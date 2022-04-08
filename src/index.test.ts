@@ -6,6 +6,7 @@ import {
   sortCountriesByPopulation,
   sumTheBiggestCountries,
 } from "./index";
+
 import { Country } from "./interfaces";
 
 describe("populationsHaveChanged", () => {
@@ -49,9 +50,10 @@ describe("populationsHaveChanged", () => {
 });
 
 describe("checkIfDataExpired", () => {
+  const now = new Date();
   test.each([
-    [100000000000000, new Date(), true],
-    [100, new Date(), false],
+    [100000000000000, now, true],
+    [100, now, false],
   ])(".check checkIfDataExpired results", (timestamp, newDate, result) => {
     expect(checkIfDataExpired(timestamp, newDate)).toBe(result);
   });
@@ -62,11 +64,13 @@ const austria = {
   population: 1,
   regionalBlocs: [{ acronym: "EU" }],
 } as Country;
+
 const poland = {
   name: "Poland",
   population: 100,
   regionalBlocs: [{ acronym: "EU" }],
 } as Country;
+
 const peru = {
   name: "Peru",
   population: 90000000000000,
@@ -74,29 +78,21 @@ const peru = {
 } as Country;
 
 const countries: Country[] = [austria, peru, poland];
-const fake5SmallerCountries: Country[] = [
-  austria,
-  poland,
-  poland,
-  austria,
-  poland,
-];
-const fake5BiggerCountries: Country[] = [austria, peru, poland, peru, poland];
 
 describe("getCountriesEU", () => {
-  it("returns the countries that are in EU", () => {
+  it("returns right output with test data", () => {
     expect(getCountriesEU(countries)).toEqual([austria, poland]);
   });
 });
 
 describe("getCountriesWithoutA", () => {
-  it("returns the countries which don't have 'a' in the name", () => {
+  it("returns right output with test data", () => {
     expect(getCountriesWithoutA(countries)).toEqual([peru]);
   });
 });
 
 describe("sortCountriesByPopulation", () => {
-  it("returns the countries by populations in descending order", () => {
+  it("returns right output with test data", () => {
     console.log(sortCountriesByPopulation(countries));
     expect(sortCountriesByPopulation(countries)).toEqual([
       peru,
@@ -107,13 +103,8 @@ describe("sortCountriesByPopulation", () => {
 });
 
 describe("sumTheBiggestCountries", () => {
-  test.each([
-    [fake5BiggerCountries, true],
-    [fake5SmallerCountries, false],
-  ])(
-    ".sumTheBiggestCountries returns true/false with different data",
-    (countriesArray, result) => {
-      expect(sumTheBiggestCountries(countriesArray)).toBe(result);
-    }
-  );
+  it("returns right output with test data", () => {
+    console.log(sumTheBiggestCountries(countries));
+    expect(sumTheBiggestCountries(countries)).toBe(true);
+  });
 });

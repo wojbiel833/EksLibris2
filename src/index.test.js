@@ -34,9 +34,10 @@ describe("populationsHaveChanged", () => {
     });
 });
 describe("checkIfDataExpired", () => {
+    const now = new Date();
     test.each([
-        [100000000000000, new Date(), true],
-        [100, new Date(), false],
+        [100000000000000, now, true],
+        [100, now, false],
     ])(".check checkIfDataExpired results", (timestamp, newDate, result) => {
         expect((0, index_1.checkIfDataExpired)(timestamp, newDate)).toBe(result);
     });
@@ -58,26 +59,18 @@ const peru = {
     regionalBlocs: [{ acronym: "SAARC" }],
 };
 const countries = [austria, peru, poland];
-const fake5SmallerCountries = [
-    austria,
-    poland,
-    poland,
-    austria,
-    poland,
-];
-const fake5BiggerCountries = [austria, peru, poland, peru, poland];
 describe("getCountriesEU", () => {
-    it("returns the countries that are in EU", () => {
+    it("returns right output with test data", () => {
         expect((0, index_1.getCountriesEU)(countries)).toEqual([austria, poland]);
     });
 });
 describe("getCountriesWithoutA", () => {
-    it("returns the countries which don't have 'a' in the name", () => {
+    it("returns right output with test data", () => {
         expect((0, index_1.getCountriesWithoutA)(countries)).toEqual([peru]);
     });
 });
 describe("sortCountriesByPopulation", () => {
-    it("returns the countries by populations in descending order", () => {
+    it("returns right output with test data", () => {
         console.log((0, index_1.sortCountriesByPopulation)(countries));
         expect((0, index_1.sortCountriesByPopulation)(countries)).toEqual([
             peru,
@@ -87,10 +80,8 @@ describe("sortCountriesByPopulation", () => {
     });
 });
 describe("sumTheBiggestCountries", () => {
-    test.each([
-        [fake5BiggerCountries, true],
-        [fake5SmallerCountries, false],
-    ])(".sumTheBiggestCountries returns true/false with different data", (countriesArray, result) => {
-        expect((0, index_1.sumTheBiggestCountries)(countriesArray)).toBe(result);
+    it("returns right output with test data", () => {
+        console.log((0, index_1.sumTheBiggestCountries)(countries));
+        expect((0, index_1.sumTheBiggestCountries)(countries)).toBe(true);
     });
 });

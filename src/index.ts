@@ -82,30 +82,26 @@ const fetchData = async function () {
   }
 };
 
-const checkLocalStorage = async function () {
+const checkLocalStorage = async function (data: Country[] | undefined) {
   try {
     // Set new expiry date
     setDateWithExpiry(CONFIG.LOCAL_STORAGE_KEY, now, CONFIG.WEEK_TIMESTAMP);
 
-    // Check if data expired
-    const dataExpired = getAndCheckDateWithExpiry(CONFIG.LOCAL_STORAGE_KEY);
+    const storageData = localStorage.getItem("TP")!;
 
-    // If data is expired -> fetchData and overwrite
-    if (dataExpired) {
-      const storageData = localStorage.getItem("TP")!;
+    const oldData: Country[] = JSON.parse(storageData);
+    const newData: Country[] | undefined = data;
 
-      const oldData: [] = JSON.parse(storageData);
-      const newData: [] | undefined = TP;
+    if (newData) {
+      localStorage.setItem("TP", JSON.stringify(newData));
 
-      if (newData) {
-        localStorage.setItem("TP", JSON.stringify(newData));
+      ifPopulationsHaveChanged(oldData, newData);
 
-        ifPopulationsHaveChanged(oldData, newData);
-
-        JSON.parse(localStorage.getItem("TP")!);
-      } else {
-        // console.log("Fetch unsuccesful!");
-      }
+      JSON.parse(localStorage.getItem("TP")!);
+      return true;
+    } else {
+      // console.log("Fetch unsuccesful!");
+      return false;
     }
   } catch (err) {
     console.log(err);
@@ -114,10 +110,15 @@ const checkLocalStorage = async function () {
 
 const init = async function () {
   try {
-    // 1) Ściągnij wszystkie możliwe dane państw z pomocą API: https://restcountries.com/v2/all. W dalszej części kursu będą one nazywane Tablicą Państw (TP).
-    TP = await fetchData();
+    // Check if data expired
+    const dataExpired = getAndCheckDateWithExpiry(CONFIG.LOCAL_STORAGE_KEY);
+
     // 3) Przy starcie aplikacji sprawdź, czy dane państw istnieją w pamięci przeglądarki. Jeśli nie, ściągnij je,
-    checkLocalStorage();
+    if (dataExpired) {
+      // 1) Ściągnij wszystkie możliwe dane państw z pomocą API: https://restcountries.com/v2/all. W dalszej części kursu będą one nazywane Tablicą Państw (TP).
+      TP = await fetchData();
+    }
+    checkLocalStorage(TP);
     // 2) Ściągnięte dane zapisz w sposób, który pozwoli na ich ponowne wykorzystanie po zamknięciu i ponownym otwarciu przeglądarki,
     saveDataInLocalStorage(TP);
   } catch (err) {
@@ -144,52 +145,51 @@ const countriesLS: Country[] = JSON.parse(localStorage.getItem("TP")!);
 export const getCountriesEU = function (countries: Country[]) {
   const countriesEU = [] as Country[];
 
-  countries.forEach((country: Country) => {
-    if (country !== undefined) {
+  if (countries) {
+    countries.forEach((country) => {
       const blocs: RegionalBlocs[] | undefined = country.regionalBlocs;
       if (blocs !== undefined) {
         if (blocs.find((union: RegionalBlocs) => union.acronym === "EU"))
           countriesEU.push(country);
       }
-    }
-  });
+    });
+  } else {
+    console.log("No data in local storage!");
+  }
 
   return countriesEU;
 };
 const countriesEUOutput: Country[] = getCountriesEU(countriesLS);
-console.log(countriesEUOutput);
+// console.log(countriesEUOutput);
 // Z uzyskanej w ten sposób tablicy usuń wszystkie państwa posiadające w swojej nazwie literę a.
 export const getCountriesWithoutA = function (countries: Country[]) {
-  return countries.filter((country: Country) => {
-    if (country) {
-      const name = country.name;
-      return !name.includes("a");
-    }
-  });
+  return countries.filter((country) => !country.name.includes("a"));
 };
 
 const countriesWitroutA: Country[] = getCountriesWithoutA(countriesEUOutput);
 
 // Z uzyskanej w ten sposób tablicy posortuj państwa według populacji, tak by najgęściej zaludnione znajdowały się na górze listy.
 export const sortCountriesByPopulation = function (countries: Country[]) {
-  return countries.sort(
-    (a: { population: number }, b: { population: number }) =>
-      b.population - a.population
-  );
+  return countries.sort((a, b) => b.population - a.population);
 };
 
 const sortedCountries = sortCountriesByPopulation(countriesWitroutA);
 
 // Zsumuj populację pięciu najgęściej zaludnionych państw i oblicz, czy jest większa od 500 milionów
 export const sumTheBiggestCountries = function (countries: Country[]) {
-  const fiveBiggestCountries = countries.slice(0, 5) as Country[];
+  const fiveBiggestCountries = countries.slice(0, 5);
   const populations: number[] = fiveBiggestCountries.map(
     (country) => country.population
   );
   const populationInSum = populations.reduce((pop, el) => (pop += el), 0);
 
-  console.log(populationInSum > 500000000);
-  return populationInSum > 500000000;
+  if (populationInSum > 500000000) {
+    console.log(`Population sum ${populationInSum} is bigger than 500000000`);
+    return true;
+  } else {
+    console.log(`Population sum ${populationInSum} is smaller than 500000000`);
+    return false;
+  }
 };
 
 sumTheBiggestCountries(sortedCountries);

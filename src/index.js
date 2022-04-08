@@ -83,26 +83,23 @@ const fetchData = function () {
         }
     });
 };
-const checkLocalStorage = function () {
+const checkLocalStorage = function (data) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             // Set new expiry date
             setDateWithExpiry(config_1.CONFIG.LOCAL_STORAGE_KEY, now, config_1.CONFIG.WEEK_TIMESTAMP);
-            // Check if data expired
-            const dataExpired = getAndCheckDateWithExpiry(config_1.CONFIG.LOCAL_STORAGE_KEY);
-            // If data is expired -> fetchData and overwrite
-            if (dataExpired) {
-                const storageData = localStorage.getItem("TP");
-                const oldData = JSON.parse(storageData);
-                const newData = TP;
-                if (newData) {
-                    localStorage.setItem("TP", JSON.stringify(newData));
-                    (0, exports.ifPopulationsHaveChanged)(oldData, newData);
-                    JSON.parse(localStorage.getItem("TP"));
-                }
-                else {
-                    // console.log("Fetch unsuccesful!");
-                }
+            const storageData = localStorage.getItem("TP");
+            const oldData = JSON.parse(storageData);
+            const newData = data;
+            if (newData) {
+                localStorage.setItem("TP", JSON.stringify(newData));
+                (0, exports.ifPopulationsHaveChanged)(oldData, newData);
+                JSON.parse(localStorage.getItem("TP"));
+                return true;
+            }
+            else {
+                // console.log("Fetch unsuccesful!");
+                return false;
             }
         }
         catch (err) {
@@ -113,10 +110,14 @@ const checkLocalStorage = function () {
 const init = function () {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            // 1) Ściągnij wszystkie możliwe dane państw z pomocą API: https://restcountries.com/v2/all. W dalszej części kursu będą one nazywane Tablicą Państw (TP).
-            TP = yield fetchData();
+            // Check if data expired
+            const dataExpired = getAndCheckDateWithExpiry(config_1.CONFIG.LOCAL_STORAGE_KEY);
             // 3) Przy starcie aplikacji sprawdź, czy dane państw istnieją w pamięci przeglądarki. Jeśli nie, ściągnij je,
-            checkLocalStorage();
+            if (dataExpired) {
+                // 1) Ściągnij wszystkie możliwe dane państw z pomocą API: https://restcountries.com/v2/all. W dalszej części kursu będą one nazywane Tablicą Państw (TP).
+                TP = yield fetchData();
+            }
+            checkLocalStorage(TP);
             // 2) Ściągnięte dane zapisz w sposób, który pozwoli na ich ponowne wykorzystanie po zamknięciu i ponownym otwarciu przeglądarki,
             saveDataInLocalStorage(TP);
         }
@@ -140,28 +141,26 @@ init();
 const countriesLS = JSON.parse(localStorage.getItem("TP"));
 const getCountriesEU = function (countries) {
     const countriesEU = [];
-    countries.forEach((country) => {
-        if (country !== undefined) {
+    if (countries) {
+        countries.forEach((country) => {
             const blocs = country.regionalBlocs;
             if (blocs !== undefined) {
                 if (blocs.find((union) => union.acronym === "EU"))
                     countriesEU.push(country);
             }
-        }
-    });
+        });
+    }
+    else {
+        console.log("No data in local storage!");
+    }
     return countriesEU;
 };
 exports.getCountriesEU = getCountriesEU;
 const countriesEUOutput = (0, exports.getCountriesEU)(countriesLS);
-console.log(countriesEUOutput);
+// console.log(countriesEUOutput);
 // Z uzyskanej w ten sposób tablicy usuń wszystkie państwa posiadające w swojej nazwie literę a.
 const getCountriesWithoutA = function (countries) {
-    return countries.filter((country) => {
-        if (country) {
-            const name = country.name;
-            return !name.includes("a");
-        }
-    });
+    return countries.filter((country) => !country.name.includes("a"));
 };
 exports.getCountriesWithoutA = getCountriesWithoutA;
 const countriesWitroutA = (0, exports.getCountriesWithoutA)(countriesEUOutput);
@@ -176,8 +175,14 @@ const sumTheBiggestCountries = function (countries) {
     const fiveBiggestCountries = countries.slice(0, 5);
     const populations = fiveBiggestCountries.map((country) => country.population);
     const populationInSum = populations.reduce((pop, el) => (pop += el), 0);
-    console.log(populationInSum > 500000000);
-    return populationInSum > 500000000;
+    if (populationInSum > 500000000) {
+        console.log(`Population sum ${populationInSum} is bigger than 500000000`);
+        return true;
+    }
+    else {
+        console.log(`Population sum ${populationInSum} is smaller than 500000000`);
+        return false;
+    }
 };
 exports.sumTheBiggestCountries = sumTheBiggestCountries;
 (0, exports.sumTheBiggestCountries)(sortedCountries);
