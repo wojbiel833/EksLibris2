@@ -34,9 +34,10 @@ describe("populationsHaveChanged", () => {
     });
 });
 describe("checkIfDataExpired", () => {
+    const now = new Date();
     test.each([
-        [100000000000000, new Date(), true],
-        [100, new Date(), false],
+        [100000000000000, now, true],
+        [100, now, false],
     ])(".check checkIfDataExpired results", (timestamp, newDate, result) => {
         expect((0, index_1.checkIfDataExpired)(timestamp, newDate)).toBe(result);
     });

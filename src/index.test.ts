@@ -6,7 +6,8 @@ import {
   sortCountriesByPopulation,
   sumTheBiggestCountries,
 } from "./index";
-import { Country, RegionalBlocs } from "./interfaces";
+
+import { Country } from "./interfaces";
 
 describe("populationsHaveChanged", () => {
   const unchangedPopulationOld: Country[] = [
@@ -49,9 +50,10 @@ describe("populationsHaveChanged", () => {
 });
 
 describe("checkIfDataExpired", () => {
+  const now = new Date();
   test.each([
-    [100000000000000, new Date(), true],
-    [100, new Date(), false],
+    [100000000000000, now, true],
+    [100, now, false],
   ])(".check checkIfDataExpired results", (timestamp, newDate, result) => {
     expect(checkIfDataExpired(timestamp, newDate)).toBe(result);
   });
@@ -62,11 +64,13 @@ const austria = {
   population: 1,
   regionalBlocs: [{ acronym: "EU" }],
 } as Country;
+
 const poland = {
   name: "Poland",
   population: 100,
   regionalBlocs: [{ acronym: "EU" }],
 } as Country;
+
 const peru = {
   name: "Peru",
   population: 90000000000000,
