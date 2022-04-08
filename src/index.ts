@@ -162,16 +162,16 @@ export const getCountriesEU = function (countries: Country[]) {
 const countriesEUOutput: Country[] = getCountriesEU(countriesLS);
 // console.log(countriesEUOutput);
 // Z uzyskanej w ten sposób tablicy usuń wszystkie państwa posiadające w swojej nazwie literę a.
-export const getCountriesWithoutA = function (countries: Country[]) {
-  return countries.filter((country) => !country.name.includes("a"));
-};
+export const getCountriesWithoutA = (
+  countries: Country[],
+  letter: string = "a"
+) => countries.filter((country) => !country.name.includes(letter));
 
 const countriesWitroutA: Country[] = getCountriesWithoutA(countriesEUOutput);
 
 // Z uzyskanej w ten sposób tablicy posortuj państwa według populacji, tak by najgęściej zaludnione znajdowały się na górze listy.
-export const sortCountriesByPopulation = function (countries: Country[]) {
-  return countries.sort((a, b) => b.population - a.population);
-};
+export const sortCountriesByPopulation = (countries: Country[]) =>
+  countries.sort((a, b) => b.population - a.population);
 
 const sortedCountries = sortCountriesByPopulation(countriesWitroutA);
 

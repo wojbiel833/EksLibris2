@@ -159,15 +159,11 @@ exports.getCountriesEU = getCountriesEU;
 const countriesEUOutput = (0, exports.getCountriesEU)(countriesLS);
 // console.log(countriesEUOutput);
 // Z uzyskanej w ten sposób tablicy usuń wszystkie państwa posiadające w swojej nazwie literę a.
-const getCountriesWithoutA = function (countries) {
-    return countries.filter((country) => !country.name.includes("a"));
-};
+const getCountriesWithoutA = (countries, letter = "a") => countries.filter((country) => !country.name.includes(letter));
 exports.getCountriesWithoutA = getCountriesWithoutA;
 const countriesWitroutA = (0, exports.getCountriesWithoutA)(countriesEUOutput);
 // Z uzyskanej w ten sposób tablicy posortuj państwa według populacji, tak by najgęściej zaludnione znajdowały się na górze listy.
-const sortCountriesByPopulation = function (countries) {
-    return countries.sort((a, b) => b.population - a.population);
-};
+const sortCountriesByPopulation = (countries) => countries.sort((a, b) => b.population - a.population);
 exports.sortCountriesByPopulation = sortCountriesByPopulation;
 const sortedCountries = (0, exports.sortCountriesByPopulation)(countriesWitroutA);
 // Zsumuj populację pięciu najgęściej zaludnionych państw i oblicz, czy jest większa od 500 milionów
