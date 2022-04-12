@@ -80,19 +80,19 @@ const peru = {
 const countries: Country[] = [austria, peru, poland];
 
 describe("getCountriesFrom", () => {
-  it("returns right output with test data", () => {
+  it("returns countries that are in EU", () => {
     expect(getCountriesFrom(countries)).toEqual([austria, poland]);
   });
 });
 
 describe("getCountriesWithoutLetter", () => {
-  it("returns right output with test data", () => {
+  it("returns countries witout 'a' n the name", () => {
     expect(getCountriesWithoutLetter(countries)).toEqual([peru]);
   });
 });
 
 describe("sortCountriesByParameter", () => {
-  it("returns right output with test data", () => {
+  it("returns sorted data in descending order", () => {
     expect(sortCountriesByParameter(countries)).toEqual([
       90000000000000, 100, 1,
     ]);
@@ -100,7 +100,7 @@ describe("sortCountriesByParameter", () => {
 });
 
 describe("sumTheBiggestPopulations", () => {
-  it("returns right output with test data", () => {
+  it("returns true if population sum is bigger than 500000000", () => {
     expect(sumTheBiggestPopulations([90000000000000, 100, 1])).toBe(true);
   });
 });
